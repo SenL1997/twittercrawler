@@ -94,6 +94,22 @@ def get_information(user_id):
         'span', {'class': 'ProfileHeaderCard-joinDateText', 'dir': 'ltr'})['title']
     return name, tweet_count, following, follower, favorite, list_count, location, join_date
 
+def get_status_information(user_name, status_id):
+    '''Return text, time, reply, retweet, favorite'''
+    url = 'https://twitter.com/'+user_name+'/status/'+status_id
+    agent = random.choice(Agent)
+    headers = {
+        'User-Agent':agent
+    }
+    html = BeautifulSoup(requests.get(url, headers=headers).text, 'html5lib')
+    text = html.find('div', {'class':'js-tweet-text-container'}).find('p', {'class':'js-tweet-text'}).text
+    time = html.find('div', {'class':'js-tweet-details-fixer'}).find('span', {'class':'metadata'}).text.strip()
+    tweet_action = html.find('div', {'class':'ProfileTweet-actionCountList'})
+    reply = tweet_action.find('span', {'class':'ProfileTweet-action--reply'}).find('span', {'class':'ProfileTweet-actionCount'})['data-tweet-stat-count']
+    retweet = tweet_action.find('span', {'class':'ProfileTweet-action--retweet'}).find('span', {'class':'ProfileTweet-actionCount'})['data-tweet-stat-count']
+    favorite = tweet_action.find('span', {'class':'ProfileTweet-action--favorite'}).find('span', {'class':'ProfileTweet-actionCount'})['data-tweet-stat-count']
+    return text, time, reply, retweet, favorite
+
 
 def main():
     for i in ids:
