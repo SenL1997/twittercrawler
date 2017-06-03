@@ -3,9 +3,9 @@ import crawl_raw
 import mysql.connector
 import time
 
-cnx = mysql.connector.connect(user='root', password='qw1322li',
+cnx = mysql.connector.connect(user='root', password='xxxx',
                               host='127.0.0.1',
-                              database='twitter')
+                              database='xxxx')
 cursor = cnx.cursor()
 usr_id_list = [
     '25073877',
