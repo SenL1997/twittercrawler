@@ -6,6 +6,7 @@ Created on 5/30/2017
 '''
 import codecs
 import random
+import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -21,6 +22,21 @@ Agent = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393',
     'Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11'
 ]
+
+Month = {
+    'Jan':'1',
+    'Feb':'2',
+    'Mar':'3',
+    'Apr':'4',
+    'May':'5',
+    'Jun':'6',
+    'Jul':'7',
+    'Aug':'8',
+    'Sep':'9',
+    'Oct':'10',
+    'Nov':'11',
+    'Dec':'12'
+}
 
 
 def id2name(user_id, proxies=None):
@@ -56,30 +72,46 @@ def get_information(user_inf, flag=0, proxies=None):
         html = BeautifulSoup(requests.get(url, headers=headers, proxies=proxies).text, 'html5lib')
     else:
         html = BeautifulSoup(requests.get(url, headers=headers).text, 'html5lib')
-    profileNav_list = html.find(
-        'ul', {'class': 'ProfileNav-list'}).find_all('li', {'class': 'ProfileNav-item'})
-    tweet_count = profileNav_list[0].find(
-        'span', {'class': 'ProfileNav-value'})['data-count']
-    following = profileNav_list[1].find(
-        'span', {'class': 'ProfileNav-value'})['data-count']
-    follower = profileNav_list[2].find(
-        'span', {'class': 'ProfileNav-value'})['data-count']
+    profileNav_list = html.find('ul', {'class': 'ProfileNav-list'})
+    following = '0'
+    follower = '0'
+    favorite = '0'
     list_count = '0'
-    favorite = profileNav_list[3].find('span', {'class': 'ProfileNav-value'})
-    if favorite.text != 'More ':
-        favorite = favorite['data-count']
-        list_count = profileNav_list[4].find(
-            'span', {'class': 'ProfileNav-value'}).text
-        if list_count == 'More ':
-            list_count = '0'
-    else:
-        favorite = '0'
+    try:
+        tweet_count = profileNav_list.find('li', {'class':'ProfileNav-item--tweets'}).find('span', {'class': 'ProfileNav-value'})['data-count']
+    except:
+        pass
+    try:
+        following = profileNav_list.find('li', {'class':'ProfileNav-item--following'}).find('span', {'class': 'ProfileNav-value'})['data-count']
+    except:
+        pass
+    try:
+        follower = profileNav_list.find('li', {'class':'ProfileNav-item--followers'}).find('span', {'class': 'ProfileNav-value'})['data-count']
+    except:
+        pass
+    try:
+        list_count = profileNav_list.find('li', {'class':'ProfileNav-item--lists'}).find('span', {'class': 'ProfileNav-value'}).text
+    except:
+        pass
+    try:
+        favorite = profileNav_list.find('li', {'class':'ProfileNav-item--favorites'}).find('span', {'class': 'ProfileNav-value'})['data-count']
+    except:
+        pass
+    
+
     profileheader = html.find('div', {'class': 'ProfileSidebar'}).find(
         'div', {'class': 'ProfileHeaderCard'})
     location = profileheader.find('span', {
         'class': 'ProfileHeaderCard-locationText', 'dir': 'ltr'}).text.split('<span')[0].strip()
+    location = location.replace(u'💗', '')
     join_date = profileheader.find(
         'span', {'class': 'ProfileHeaderCard-joinDateText', 'dir': 'ltr'})['title']
+    join_date = join_date.split('-')[1].split(' ')
+    year = join_date[3]
+    month = Month[join_date[2]]
+    day = join_date[1]
+    join_date = (year+'-'+month+'-'+day)
+
     return name, tweet_count, following, follower, favorite, list_count, location, join_date
 
 def get_status_information(user_name, status_id, proxies=None):
