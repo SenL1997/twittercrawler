@@ -144,6 +144,16 @@ def get_status_information(status_id, proxies=None):
     favorite = tweet_action.find('span', {'class':'ProfileTweet-action--favorite'}).find('span', {'class':'ProfileTweet-actionCount'})['data-tweet-stat-count']
     return user_id, text, time, reply, retweet, favorite
 
+def get(name, status_id):
+    '''Return at most 20 status id before'''
+    res = requests.get('https://twitter.com/i/profiles/show/'+name+'/timeline/tweets?include_available_features=1&include_entities=1&max_position='+status_id+'&reset_error_state=false')
+    text = remove_emoji(codecs.decode(res.text, 'unicode_escape').replace('\\', '').replace('\n', ''))
+    html = BeautifulSoup(text, 'html5lib')
+    tweets = html.find_all('li', {'class':'js-stream-item'})
+    id_list = []
+    for item in tweets:
+        id_list.append(item['data-item-id'])
+    return id_list
 
 def test():
     user_id = '25073877'
