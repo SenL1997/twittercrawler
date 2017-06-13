@@ -11,6 +11,15 @@ import datetime
 import requests
 from bs4 import BeautifulSoup
 
+emoji_pattern = re.compile(
+    u"(\ud83d[\ude00-\ude4f])|"  # emoticons
+    u"(\ud83c[\udf00-\uffff])|"  # symbols & pictographs (1 of 2)
+    u"(\ud83d[\u0000-\uddff])|"  # symbols & pictographs (2 of 2)
+    u"(\ud83d[\ude80-\udeff])|"  # transport & map symbols
+    u"(\ud83c[\udde0-\uddff])"  # flags (iOS)
+    "+", flags=re.UNICODE
+)
+
 Proxies = {
     'http':'socks5://127.0.0.1:1080',
     'https':'socks5://127.0.0.1:1080'
@@ -38,6 +47,8 @@ Month = {
     'Dec':'12'
 }
 
+def remove_emoji(text):
+    return emoji_pattern.sub(r'', text)
 
 def id2name(user_id, proxies=None):
     '''Convert user_id to user_name'''
