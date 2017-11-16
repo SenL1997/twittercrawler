@@ -4,10 +4,10 @@ import MySQLdb
 cnx = MySQLdb.connect(host='localhost', user = 'root', password = '123456', database='twitter',charset="utf8")
 cur = cnx.cursor()
 
-consumer_key = '4mZemFASPIcdBpzKjROBf94eJ'
-consumer_secret = '9Qzx7JM5gQQkIBjzz3Z0hYJjADiVHbWG4Ar5LG30pbYYV4NsJr'
-access_token = '851629370921730048-0iBKRDz0mhJCezooblU1JqpNVdih1vm'
-access_token_secret = 'Zg9NJl920J8sx7x5UTdLyZMGznJCN7t9axExyd2sDbW6x'
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_token_secret = ''
 
 add_status = ("INSERT INTO status"
 "(status_id, hashtags, user_id, created_time, retweet_id) "
